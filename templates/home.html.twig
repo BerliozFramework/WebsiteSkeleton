@@ -9,7 +9,7 @@
     <meta name="description" content="First page on Berlioz Framework">
     <meta name="author" content="">
 
-    <link rel="stylesheet" href="{{ preload(asset('/berlioz.css'), {"as": "style"}) }}">
+    <link rel="stylesheet" href="{{ preload(asset('/app.css'), {"as": "style"}) }}">
 </head>
 <body>
 <div class="container ">
@@ -41,7 +41,7 @@
     </div>
 </div>
 
-<script type="text/javascript" src="{{ preload(asset('/berlioz.js'), {"as": "script"}) }}" defer></script>
+<script type="text/javascript" src="{{ preload(asset('/app.js'), {"as": "script"}) }}" defer></script>
 <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700" rel="stylesheet">
 {{ include('@Berlioz-HttpCore/Twig/Debug.twig') }}
 </body>
