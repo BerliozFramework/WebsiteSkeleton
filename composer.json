@@ -1,0 +1,31 @@
+{
+  "name": "berlioz/website-skeleton",
+  "type": "project",
+  "description": "Berlioz Framework website skeleton",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Ronan Giron",
+      "email": "ronan@getberlioz.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "App\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "App\\Tests\\": "tests/"
+    }
+  },
+  "require": {
+    "php": "^7.1",
+    "berlioz/http-core": "^1.0",
+    "berlioz/cli-core": "^1.0"
+  },
+  "config": {
+    "optimize-autoloader": true,
+    "sort-packages": true
+  }
+}

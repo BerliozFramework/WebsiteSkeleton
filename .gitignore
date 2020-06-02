@@ -1,0 +1,12 @@
+# Berlioz framework project
+/node_modules/
+/public/assets/
+/var/
+/vendor/
+/phpunit.xml
+/.phpunit.result.cache
+!**/.gitkeep
+
+# Dev environment
+.idea
+.vscode

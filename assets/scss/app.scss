@@ -1,0 +1,22 @@
+// Website
+
+@import "variables";
+@import "~bootstrap/scss/bootstrap";
+
+
+// Application
+
+html, body {
+  padding: 0;
+  margin: 0;
+}
+
+.jumbotron {
+  background-color: transparent;
+
+  #logo {
+    width: 100%;
+    height: auto;
+    fill: theme-color('primary');
+  }
+}

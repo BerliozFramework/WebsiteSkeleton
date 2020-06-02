@@ -1,0 +1,53 @@
+{
+  "name": "berlioz.website-skeleton",
+  "version": "1.0.0",
+  "description": "Berlioz Framework website skeleton",
+  "main": "_assets/app.js",
+  "scripts": {
+    "build": "webpack --config webpack.config.js --mode=production",
+    "build-dev": "webpack --config webpack.config.js --mode=development",
+    "watch": "webpack --config webpack.config.js --mode=development --watch",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BerliozFramework/WebsiteSkeleton.git"
+  },
+  "author": "Ronan Giron",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/BerliozFramework/WebsiteSkeleton/issues"
+  },
+  "homepage": "https://github.com/BerliozFramework/WebsiteSkeleton#readme",
+  "dependencies": {
+    "bootstrap": "^4.5.0",
+    "jquery": "^3.5.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.9.0",
+    "@babel/plugin-syntax-dynamic-import": "^7.7.4",
+    "@babel/preset-env": "^7.9.5",
+    "assets-webpack-plugin": "^3.9.12",
+    "autoprefixer": "^9.7.6",
+    "babel-loader": "^8.1.0",
+    "clean-webpack-plugin": "^3.0.0",
+    "css-loader": "^3.5.2",
+    "file-loader": ">=4.3.0 <5.0.0",
+    "friendly-errors-webpack-plugin": "^1.7.0",
+    "image-webpack-loader": "^5.1.0",
+    "mini-css-extract-plugin": ">=0.4.0 <0.4.3",
+    "node-sass": "^4.13.1",
+    "optimize-css-assets-webpack-plugin": "^5.0.3",
+    "postcss-loader": "^3.0.0",
+    "resolve-url-loader": "^3.1.1",
+    "sass-loader": "^7.3.1",
+    "simple-progress-webpack-plugin": "^1.1.2",
+    "style-loader": "^1.1.4",
+    "terser-webpack-plugin": "^2.3.5",
+    "url-loader": "^2.3.0",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11",
+    "webpack-manifest-plugin": "^2.2.0",
+    "webpack-notifier": "^1.8.0"
+  }
+}
