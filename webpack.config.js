@@ -24,7 +24,7 @@ module.exports = (env, argv) => {
         mode: argv.mode || 'production',
         context: __dirname,
         entry: {
-            website: path.resolve(__dirname, 'assets/website.js'),
+            app: path.resolve(__dirname, 'assets/app.js'),
         },
         output: {
             path: path.resolve(__dirname, 'public/assets/'),
