@@ -1,9 +1,5 @@
-// Bootstrap
-
-$theme-colors: (
-        "primary": #0071d2
-);
+$primary: #0071d2;
 $body-color: #343a40;
-$link-color: #0071d2;
+$link-color: $primary;
 $pink: #cc1769;
 $font-family-sans-serif: 'Open Sans', -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif;

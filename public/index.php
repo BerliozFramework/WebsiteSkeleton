@@ -12,10 +12,8 @@ try {
     }
 
     // App
-    $app = new \Berlioz\HttpCore\App\HttpApp();
-    $app->printResponse($app->handle());
+    $app = new \Berlioz\Http\Core\App\HttpApp();
+    $app->print($app->handle());
 } catch (\Throwable $e) {
-    print '<pre>';
-    print (string) $e;
-    print '</pre>';
+    print '<pre>' . $e . '</pre>';
 }

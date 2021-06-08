@@ -9,13 +9,13 @@
     <meta name="description" content="First page on Berlioz Framework">
     <meta name="author" content="">
 
-    <link rel="stylesheet" href="{{ preload(asset('/app.css'), {"as": "style"}) }}">
+    {{ entrypoints('app', 'css', {preload: true}) }}
 </head>
 <body>
-<div class="container ">
+<div class="container my-5">
     <div class="row align-items-start">
         <div class="col">
-            <div class="jumbotron text-center text-md-left">
+            <div class="jumbotron text-center text-md-start">
                 <div class="row align-items-center">
                     <div class="col-12 col-md-6 order-1 order-md-0 mt-3 mt-md-0">
                         <h1 class="display-4">Welcome</h1>
@@ -32,8 +32,8 @@
                             </a>
                         </p>
                     </div>
-                    <div class="col-6 mx-auto mr-md-0 col-md-5 px-md-5 order-0 order-md-1">
-                        <img src="{{ asset("/images/logo.svg") }}" id="logo" alt="Berlioz logo">
+                    <div class="col-6 mx-auto me-md-0 col-md-5 px-md-5 order-0 order-md-1">
+                        <img src="{{ asset('images/logo.svg') }}" id="logo" alt="Berlioz logo">
                     </div>
                 </div>
             </div>
@@ -41,7 +41,7 @@
     </div>
 </div>
 
-<script type="text/javascript" src="{{ preload(asset('/app.js'), {"as": "script"}) }}" defer></script>
+{{ entrypoints('app', 'js', {preload: true}) }}
 <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700" rel="stylesheet">
 {{ include('@Berlioz-HttpCore/Twig/Debug.twig') }}
 </body>

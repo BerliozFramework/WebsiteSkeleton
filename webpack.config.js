@@ -1,30 +1,20 @@
+const webpack = require('webpack');
 const path = require('path');
 const AssetsPlugin = require('assets-webpack-plugin');
 const {CleanWebpackPlugin} = require("clean-webpack-plugin");
-const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
-const ManifestPlugin = require('webpack-manifest-plugin');
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
+const {WebpackManifestPlugin} = require('webpack-manifest-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
-const SimpleProgressWebpackPlugin = require('simple-progress-webpack-plugin');
-const TerserPlugin = require('terser-webpack-plugin');
 const WebpackNotifierPlugin = require('webpack-notifier');
-
-const purgeManifestFile = (name) => {
-    return name.replace(/^/, '/')
-        .replace(/\\/g, '/')
-        .replace(/\/{2,}/g, '/')
-        .replace(/(\?v=[0-9.]*)$/, '')
-};
 
 module.exports = (env, argv) => {
     const devMode = argv.mode !== 'production';
-
-    return {
-        devtool: devMode ? 'source-map' : false,
+    const config = {
+        devtool: devMode ? 'eval-source-map' : false,
         mode: argv.mode || 'production',
         context: __dirname,
         entry: {
-            app: path.resolve(__dirname, 'assets/app.js'),
+            app: path.resolve(__dirname, 'resources/assets/app.js'),
         },
         output: {
             path: path.resolve(__dirname, 'public/assets/'),
@@ -104,7 +94,7 @@ module.exports = (env, argv) => {
                                 },
                                 pngquant: {
                                     enabled: !devMode,
-                                    quality: '65-90',
+                                    quality: [0.65, 0.90],
                                     speed: 4
                                 },
                                 gifsicle: {
@@ -130,16 +120,13 @@ module.exports = (env, argv) => {
         optimization: {
             minimize: !devMode,
             minimizer: [
-                new TerserPlugin({
-                    test: /\.js($|\?)/i,
-                    sourceMap: devMode
-                }),
-                new OptimizeCSSAssetsPlugin({})
+                `...`,
+                new CssMinimizerPlugin()
             ],
             splitChunks: {
                 cacheGroups: {
                     vendor: {
-                        test: /\.js($|\?)/i,
+                        // test: /\.js($|\?)/i,
                         chunks: 'all',
                         minChunks: 2,
                         name: 'vendor',
@@ -152,30 +139,27 @@ module.exports = (env, argv) => {
             hints: false
         },
         plugins: [
+            new webpack.ProgressPlugin(),
             new MiniCssExtractPlugin({
-                filename: "css/[name].[hash:8].css",
-                chunkFilename: "css/[id].[hash:8].css"
+                filename: "css/[name].[fullhash:8].css",
+                chunkFilename: "css/[id].[fullhash:8].css"
             }),
             new AssetsPlugin({
                 entrypoints: true,
-                publicPath: true,
-                integrity: true,
                 filename: 'entrypoints.json',
-                path: 'public/assets'
+                useCompilerPath: true,
             }),
+            new WebpackManifestPlugin({}),
             new CleanWebpackPlugin({
                 cleanStaleWebpackAssets: false
             }),
-            new FriendlyErrorsWebpackPlugin(),
-            new ManifestPlugin({
-                map: (file) => {
-                    file.name = purgeManifestFile(file.name);
-                    file.path = purgeManifestFile(file.path);
-                    return file
-                }
-            }),
-            new SimpleProgressWebpackPlugin({format: 'compact'}),
-            new WebpackNotifierPlugin({alwaysNotify: true})
+            new WebpackNotifierPlugin({alwaysNotify: true}),
         ]
+    };
+
+    if (devMode) {
+        config.plugins.push(new webpack.SourceMapDevToolPlugin({}));
     }
+
+    return config;
 };

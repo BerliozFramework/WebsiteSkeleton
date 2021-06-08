@@ -19,10 +19,12 @@
       "App\\Tests\\": "tests/"
     }
   },
+  "minimum-stability": "beta",
+  "prefer-stable": true,
   "require": {
-    "php": "^7.1 || ^8.0",
-    "berlioz/http-core": "^1.0",
-    "berlioz/cli-core": "^1.0"
+    "php": "^8.0",
+    "berlioz/http-core": "^2.0",
+    "berlioz/cli-core": "^2.0"
   },
   "config": {
     "optimize-autoloader": true,

@@ -15,7 +15,8 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use Berlioz\Core\Exception\BerliozException;
-use Berlioz\HttpCore\Controller\AbstractController;
+use Berlioz\Http\Core\Attribute as Berlioz;
+use Berlioz\Http\Core\Controller\AbstractController;
 use Psr\Http\Message\ResponseInterface;
 use Twig\Error\Error;
 
@@ -29,13 +30,13 @@ class MainController extends AbstractController
     /**
      * Home route.
      *
-     * @return ResponseInterface|string
+     * @return ResponseInterface
      * @throws BerliozException
      * @throws Error
-     * @route("/")
      */
-    public function home()
+    #[Berlioz\Route('/')]
+    public function home(): ResponseInterface
     {
-        return $this->render('home.html.twig');
+        return $this->response($this->render('home.html.twig'));
     }
 }
