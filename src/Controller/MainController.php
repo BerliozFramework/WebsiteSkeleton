@@ -20,11 +20,6 @@ use Berlioz\Http\Core\Controller\AbstractController;
 use Psr\Http\Message\ResponseInterface;
 use Twig\Error\Error;
 
-/**
- * Class MainController.
- *
- * @package App\Controller
- */
 class MainController extends AbstractController
 {
     /**
