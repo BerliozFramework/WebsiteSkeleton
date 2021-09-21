@@ -7,6 +7,12 @@ https://getberlioz.com
 
 ## Installation
 
+To clone skeleton:
+
+```bash
+$ composer create-project berlioz/website-skeleton my-project --remove-vcs
+```
+
 To install PHP dependencies:
 
 ```bash
