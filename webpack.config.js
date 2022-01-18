@@ -1,7 +1,6 @@
 const webpack = require('webpack');
 const path = require('path');
 const AssetsPlugin = require('assets-webpack-plugin');
-const {CleanWebpackPlugin} = require("clean-webpack-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const {WebpackManifestPlugin} = require('webpack-manifest-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
@@ -14,13 +13,14 @@ module.exports = (env, argv) => {
         mode: argv.mode || 'production',
         context: __dirname,
         entry: {
-            app: path.resolve(__dirname, 'resources/assets/app.js'),
+            app: path.resolve(__dirname, 'resources/assets/app.js')
         },
         output: {
             path: path.resolve(__dirname, 'public/assets/'),
             filename: 'js/[name].[contenthash:8].js',
             publicPath: '/assets/',
-            pathinfo: false
+            pathinfo: false,
+            clean: true,
         },
         module: {
             rules: [
@@ -46,7 +46,15 @@ module.exports = (env, argv) => {
                         },
                         {
                             loader: 'postcss-loader',
-                            options: {sourceMap: devMode}
+                            options: {
+                                sourceMap: devMode,
+                                postcssOptions: {
+                                    plugins: [
+                                        'postcss-preset-env',
+                                        'autoprefixer',
+                                    ]
+                                }
+                            }
                         },
                         {
                             loader: 'resolve-url-loader',
@@ -61,25 +69,19 @@ module.exports = (env, argv) => {
                 {
                     test: /\.(ttf|eot|otf|woff2?|svg)(\?v=[0-9.]*)?$/,
                     include: /font(s)?/,
-                    use: {
-                        loader: 'file-loader',
-                        options: {
-                            name: '[name].[hash:8].[ext]',
-                            outputPath: 'fonts/'
-                        }
+                    type: 'asset/resource',
+                    generator: {
+                        filename: 'fonts/[name].[hash:8][ext][query]'
                     }
                 },
                 {
                     test: /\.(png|gif|jpe?g|svg|ico|webp)$/,
                     exclude: /font(s)?/,
+                    type: 'asset/resource',
+                    generator: {
+                        filename: 'images/[name].[hash:8][ext][query]'
+                    },
                     use: [
-                        {
-                            loader: 'file-loader',
-                            options: {
-                                name: '[name].[hash:8].[ext]',
-                                outputPath: 'images/'
-                            }
-                        },
                         {
                             loader: 'image-webpack-loader',
                             options: {
@@ -107,12 +109,9 @@ module.exports = (env, argv) => {
                 },
                 {
                     test: /\.(mp4)$/,
-                    use: {
-                        loader: 'file-loader',
-                        options: {
-                            name: '[name].[hash:8].[ext]',
-                            outputPath: 'videos/'
-                        }
+                    type: 'asset/resource',
+                    generator: {
+                        filename: 'videos/[name].[hash:8][ext][query]'
                     }
                 }
             ]
@@ -126,11 +125,10 @@ module.exports = (env, argv) => {
             splitChunks: {
                 cacheGroups: {
                     vendor: {
-                        // test: /\.js($|\?)/i,
+                        test: /\.js($|\?)/i,
                         chunks: 'all',
                         minChunks: 2,
-                        name: 'vendor',
-                        enforce: true
+                        filename: 'js/bundle.[name].[hash:8].js',
                     }
                 }
             },
@@ -150,9 +148,6 @@ module.exports = (env, argv) => {
                 useCompilerPath: true,
             }),
             new WebpackManifestPlugin({}),
-            new CleanWebpackPlugin({
-                cleanStaleWebpackAssets: false
-            }),
             new WebpackNotifierPlugin({alwaysNotify: true}),
         ]
     };

@@ -21,8 +21,8 @@
   },
   "require": {
     "php": "^8.0",
-    "berlioz/http-core": "^2.0",
-    "berlioz/cli-core": "^2.0"
+    "berlioz/http-core": "^2.1",
+    "berlioz/cli-core": "^2.1"
   },
   "config": {
     "optimize-autoloader": true,
