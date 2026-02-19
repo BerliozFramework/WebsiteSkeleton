@@ -5,6 +5,7 @@ const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const {WebpackManifestPlugin} = require('webpack-manifest-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const WebpackNotifierPlugin = require('webpack-notifier');
+const ImageMinimizerPlugin = require("image-minimizer-webpack-plugin");
 
 module.exports = (env, argv) => {
     const devMode = argv.mode !== 'production';
@@ -13,14 +14,16 @@ module.exports = (env, argv) => {
         mode: argv.mode || 'production',
         context: __dirname,
         entry: {
-            app: path.resolve(__dirname, 'resources/assets/app.js')
+            app: path.resolve(__dirname, 'resources/assets/app.js'),
         },
         output: {
             path: path.resolve(__dirname, 'public/assets/'),
-            filename: 'js/[name].[contenthash:8].js',
+            filename: devMode ? 'js/[name].js' : 'js/[name].[contenthash:8].js',
             publicPath: '/assets/',
             pathinfo: false,
-            clean: true,
+            clean: {
+                keep: /entrypoints\.json/
+            },
         },
         module: {
             rules: [
@@ -31,38 +34,69 @@ module.exports = (env, argv) => {
                             loader: 'babel-loader',
                             options: {
                                 presets: ['@babel/preset-env'],
-                                plugins: ['@babel/plugin-syntax-dynamic-import'],
+                                plugins: [
+                                    '@babel/plugin-syntax-dynamic-import',
+                                    '@babel/plugin-proposal-throw-expressions'
+                                ],
                                 sourceMap: devMode
                             }
                         }
                 },
                 {
                     test: /\.(c|s[c|a])ss$/,
-                    use: [
-                        MiniCssExtractPlugin.loader,
+                    oneOf: [
                         {
-                            loader: "css-loader",
-                            options: {sourceMap: devMode, importLoaders: 1}
+                            use: [
+                                MiniCssExtractPlugin.loader,
+                                {
+                                    loader: "css-loader",
+                                    options: {sourceMap: devMode, importLoaders: 1}
+                                },
+                                {
+                                    loader: 'postcss-loader',
+                                    options: {sourceMap: devMode}
+                                },
+                                {
+                                    loader: 'resolve-url-loader',
+                                    options: {sourceMap: devMode}
+                                },
+                                {
+                                    loader: 'sass-loader',
+                                    options: {
+                                        sourceMap: true,
+                                        sassOptions: {
+                                            silenceDeprecations: ['import', 'global-builtin', 'color-functions'],
+                                        },
+                                    }
+                                },
+                            ],
                         },
                         {
-                            loader: 'postcss-loader',
-                            options: {
-                                sourceMap: devMode,
-                                postcssOptions: {
-                                    plugins: [
-                                        'postcss-preset-env',
-                                        'autoprefixer',
-                                    ]
-                                }
-                            }
-                        },
-                        {
-                            loader: 'resolve-url-loader',
-                            options: {sourceMap: devMode}
-                        },
-                        {
-                            loader: 'sass-loader',
-                            options: {sourceMap: true}
+                            resourceQuery: "?dark",
+                            use: [
+                                MiniCssExtractPlugin.loader,
+                                {
+                                    loader: "css-loader",
+                                    options: {sourceMap: devMode, importLoaders: 1}
+                                },
+                                {
+                                    loader: 'postcss-loader',
+                                    options: {sourceMap: devMode}
+                                },
+                                {
+                                    loader: 'resolve-url-loader',
+                                    options: {sourceMap: devMode}
+                                },
+                                {
+                                    loader: 'sass-loader',
+                                    options: {
+                                        sourceMap: true,
+                                        sassOptions: {
+                                            silenceDeprecations: ['import', 'global-builtin', 'color-functions'],
+                                        },
+                                    }
+                                },
+                            ],
                         },
                     ],
                 },
@@ -71,47 +105,22 @@ module.exports = (env, argv) => {
                     include: /font(s)?/,
                     type: 'asset/resource',
                     generator: {
-                        filename: 'fonts/[name].[hash:8][ext][query]'
+                        filename: devMode ? 'fonts/[name][ext][query]' : 'fonts/[name].[contenthash:8][ext][query]'
                     }
                 },
                 {
-                    test: /\.(png|gif|jpe?g|svg|ico|webp)$/,
+                    test: /\.(png|gif|jpe?g|ico|webp|svg)$/,
                     exclude: /font(s)?/,
                     type: 'asset/resource',
                     generator: {
-                        filename: 'images/[name].[hash:8][ext][query]'
+                        filename: devMode ? 'images/[name][ext][query]' : 'images/[name].[contenthash:8][ext][query]'
                     },
-                    use: [
-                        {
-                            loader: 'image-webpack-loader',
-                            options: {
-                                disable: devMode,
-                                mozjpeg: {
-                                    enabled: !devMode,
-                                    progressive: true,
-                                    quality: 65
-                                },
-                                optipng: {
-                                    enabled: !devMode,
-                                },
-                                pngquant: {
-                                    enabled: !devMode,
-                                    quality: [0.65, 0.90],
-                                    speed: 4
-                                },
-                                gifsicle: {
-                                    enabled: !devMode,
-                                    interlaced: false,
-                                }
-                            },
-                        }
-                    ]
                 },
                 {
                     test: /\.(mp4)$/,
                     type: 'asset/resource',
                     generator: {
-                        filename: 'videos/[name].[hash:8][ext][query]'
+                        filename: devMode ? 'videos/[name][ext][query]' : 'videos/[name].[contenthash:8][ext][query]'
                     }
                 }
             ]
@@ -120,15 +129,50 @@ module.exports = (env, argv) => {
             minimize: !devMode,
             minimizer: [
                 `...`,
-                new CssMinimizerPlugin()
+                new CssMinimizerPlugin(),
+                new ImageMinimizerPlugin({
+                    minimizer: {
+                        implementation: ImageMinimizerPlugin.sharpMinify,
+                        options: {
+                            encodeOptions: {
+                                jpeg: {
+                                    // https://sharp.pixelplumbing.com/api-output#jpeg
+                                    quality: 100,
+                                },
+                                webp: {
+                                    // https://sharp.pixelplumbing.com/api-output#webp
+                                    lossless: true,
+                                },
+                                avif: {
+                                    // https://sharp.pixelplumbing.com/api-output#avif
+                                    lossless: true,
+                                },
+
+                                // PNG by default sets the quality to 100%, which is same as lossless
+                                // https://sharp.pixelplumbing.com/api-output#png
+                                png: {},
+
+                                // GIF does not support lossless compression at all
+                                // https://sharp.pixelplumbing.com/api-output#gif
+                                gif: {},
+                            },
+                        },
+                    },
+                }),
             ],
             splitChunks: {
                 cacheGroups: {
+                    styles: {
+                        type: 'css/mini-extract',
+                        chunks: 'all',
+                        minChunks: 2,
+                        filename: devMode ? 'css/[id].css' : 'css/bundle.[id].[contenthash:8].css',
+                    },
                     vendor: {
                         test: /\.js($|\?)/i,
                         chunks: 'all',
                         minChunks: 2,
-                        filename: 'js/bundle.[name].[hash:8].js',
+                        filename: devMode ? 'js/bundle.[id].js' : 'js/bundle.[id].[contenthash:8].js',
                     }
                 }
             },
@@ -139,8 +183,8 @@ module.exports = (env, argv) => {
         plugins: [
             new webpack.ProgressPlugin(),
             new MiniCssExtractPlugin({
-                filename: "css/[name].[fullhash:8].css",
-                chunkFilename: "css/[id].[fullhash:8].css"
+                filename: devMode ? 'css/[name].css' : 'css/[name].[contenthash:8].css',
+                chunkFilename: devMode ? 'css/bundle.[id].css' : 'css/bundle.[id].[contenthash:8].css',
             }),
             new AssetsPlugin({
                 entrypoints: true,
