@@ -1,7 +1,10 @@
 {
-  "berlioz": {
-    "debug": {
-      "enable": true
+    "berlioz": {
+        "debug": {
+            "enable": true,
+            "ip": [
+                "127.0.0.1"
+            ]
+        }
     }
-  }
 }
