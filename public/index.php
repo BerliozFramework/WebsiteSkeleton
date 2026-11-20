@@ -14,6 +14,9 @@ try {
     // App
     $app = new \Berlioz\Http\Core\App\HttpApp();
     $app->print($app->handle());
+
+    // Work after the response (terminate listeners, deferred queues)
+    $app->terminate();
 } catch (\Throwable $e) {
     print '<pre>' . $e . '</pre>';
 }
