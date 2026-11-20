@@ -21,7 +21,7 @@
   },
   "require": {
     "php": "^8.2",
-    "berlioz/berlioz": "^3.0"
+    "berlioz/berlioz": "^3.4"
   },
   "config": {
     "sort-packages": true
